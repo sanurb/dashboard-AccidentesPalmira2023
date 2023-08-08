@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 
 # Leer el CSV y parsear la fecha
 df_accidentes = pd.read_csv(
-    "accidentes_palmira.csv",
+    "../accidentes_palmira.csv",
     parse_dates=["FECHA"],
     date_format='%d/%m/%Y %I:%M:%S %p'  # Usamos date_format en lugar de date_parser
 )

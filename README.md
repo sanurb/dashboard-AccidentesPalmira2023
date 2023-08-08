@@ -39,7 +39,7 @@ pip install -r requirements.txt
 
 ### 3. Ejecutar la aplicación:
 ```bash
-python main.py
+python app.py
 ```
 
 ### 4. Abre tu navegador y visita http://127.0.0.1:8050/.

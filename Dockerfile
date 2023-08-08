@@ -9,5 +9,6 @@ COPY . .
 
 # Exponer el puerto 8050 para Dash
 EXPOSE 8050
+WORKDIR /app/src
 
-CMD ["python", "tu_nombre_de_archivo.py"]
+CMD ["python", "app.py"]
