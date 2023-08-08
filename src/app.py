@@ -51,6 +51,7 @@ fig_mapa = px.scatter_mapbox(df_accidentes,
 
 # Crear la aplicación Dash
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 
 # Dropdown para Seleccionar el Año
 year_dropdown = dcc.Dropdown(
