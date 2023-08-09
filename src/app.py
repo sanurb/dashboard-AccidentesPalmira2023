@@ -30,7 +30,7 @@ labels = ['0-10', '11-20', '21-30', '31-40', '41-50', '51-60', '61-70', '71-80',
 df_accidentes['RANGO_EDAD'] = pd.cut(df_accidentes['EDAD'], bins=bins, labels=labels, right=False)
 
 # Gráfico de barras para hipótesis de accidentes
-NmaxHipotesis = 10  # Número de hipótesis más frecuentes a mostrar
+NmaxHipotesis = 15  # Número de hipótesis más frecuentes a mostrar
 top_hipotesis = df_accidentes['HIPOTESIS'].value_counts().nlargest(NmaxHipotesis).index.tolist()
 df_accidentes['HIPOTESIS_AJUSTADA'] = df_accidentes['HIPOTESIS'].where(df_accidentes['HIPOTESIS'].isin(top_hipotesis), 'Otras')
 df_hipotesis_ajustada = df_accidentes['HIPOTESIS_AJUSTADA'].value_counts().reset_index()
@@ -185,9 +185,9 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(dcc.Graph(id='heatmap'), width=12)
     ]),
-    dbc.Row([
-        dbc.Col(dcc.Graph(figure=fig_mapa), width=12)
-    ])
+    # dbc.Row([
+    #     dbc.Col(dcc.Graph(figure=fig_mapa), width=12)
+    # ])
 ], fluid=True)
 
 # Ejecutar la aplicación
