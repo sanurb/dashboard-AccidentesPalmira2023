@@ -78,7 +78,7 @@ fig_mes = px.histogram(
     df_accidentes,
     x="MES_NOMBRE",
     title="Accidentes por Mes (2022-2023)",
-    color_discrete_sequence=[color_scale[5]])
+    color_discrete_sequence=[px.colors.qualitative.Plotly[0]])
 fig_dia_semana = px.histogram(
     df_accidentes,
     x="DIA_SEMANA",
