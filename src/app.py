@@ -5,8 +5,9 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 from datetime import datetime
 import dash_bootstrap_components as dbc
+from mappings import barrio_comuna_mapping
 
-
+color_scale = px.colors.sequential.Plasma
 # Leer el CSV y parsear la fecha
 df_accidentes = pd.read_csv(
     "../accidentes_palmira.csv",
@@ -28,6 +29,12 @@ if df_accidentes['AÑO'].dtype == 'object':
 bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 labels = ['0-10', '11-20', '21-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100']
 df_accidentes['RANGO_EDAD'] = pd.cut(df_accidentes['EDAD'], bins=bins, labels=labels, right=False)
+
+# Columna para las comunas
+df_accidentes['COMUNA'] = df_accidentes['BARRIOS-CORREGIMIENTO- VIA'].map(barrio_comuna_mapping)
+total_accidentes = len(df_accidentes)
+comunas_percent = (df_accidentes['COMUNA'].value_counts() / total_accidentes * 100).reset_index()
+comunas_percent.columns = ['COMUNA', 'PORCENTAJE']
 
 # Gráfico de barras para hipótesis de accidentes
 NmaxHipotesis = 15  # Número de hipótesis más frecuentes a mostrar
@@ -63,6 +70,8 @@ fig_hipotesis_ajustada = px.bar(
     color='CUENTA',
     color_continuous_scale=px.colors.sequential.Blues
 )
+fig_comuna = px.bar(comunas_percent, x="COMUNA", y="PORCENTAJE", title="Porcentaje de Accidentes por Comuna (2022-2023)",
+                    labels={'COMUNA': 'Comuna', 'PORCENTAJE': '% de Accidentes'}, color='PORCENTAJE', color_continuous_scale=color_scale)
 
 # Crear la aplicación Dash
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -87,7 +96,8 @@ year_dropdown = dcc.Dropdown(
      Output('zona-plot', 'figure'),
      Output('gravedad-plot', 'figure'),
      Output('rango-edad-plot', 'figure'),
-     Output('condicion-victima-plot', 'figure')],
+     Output('condicion-victima-plot', 'figure'),
+     Output('comuna-plot', 'figure')],
     [Input('year-dropdown', 'value')]
 )
 
@@ -103,8 +113,9 @@ def update_graphs(selected_year):
                                           title=f"Distribución de Accidentes por Rango de Edad y Género ({selected_year})")
     fig_condicion_victima_updated = px.histogram(filtered_df, x="CONDICION DE LA VICTIMA",
                                                  title=f"Condición de la Víctima ({selected_year})")
+    fig_comuna_updated = px.histogram(filtered_df, x="COMUNA", title=f"Accidentes por Comuna ({selected_year})")
 
-    return fig_dia_updated, fig_mes_updated, fig_barrio_updated, fig_zona_updated, fig_gravedad_updated, fig_rango_edad_updated, fig_condicion_victima_updated
+    return fig_dia_updated, fig_mes_updated, fig_barrio_updated, fig_zona_updated, fig_gravedad_updated, fig_rango_edad_updated, fig_condicion_victima_updated, fig_comuna_updated
 
 
 # Callback para el heatmap
@@ -178,6 +189,9 @@ app.layout = dbc.Container([
     ]),
     dbc.Row([
         dbc.Col(dcc.Graph(id='grafica-hipotesis', figure=fig_hipotesis_ajustada), width=12)
+    ]),
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='comuna-plot', figure=fig_comuna), width=12)
     ]),
     dbc.Row([
         dbc.Col(date_picker, width=12)
