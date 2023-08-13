@@ -169,47 +169,43 @@ date_picker = html.Div([
 # Definir el layout de la aplicación
 app.layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Dashboard de Accidentes de Tránsito en Palmira"), width={'size': 12})
+        dbc.Col(html.H1("Dashboard de Accidentes de Tránsito en Palmira"), width=12, className="text-center mb-4")
     ]),
     dbc.Row(
         [
-            dbc.Label("Selecciona un Año:", html_for="year-dropdown", width=2),
             dbc.Col(
                 year_dropdown,
-                width=10
+                md=6, xs=12, className="mb-3"
             ),
         ],
-        className="mb-3",
+        justify="center",
     ),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='dia-plot', figure=fig_dia_semana), width=4),
-        dbc.Col(dcc.Graph(id='mes-plot', figure=fig_mes), width=4),
-        dbc.Col(dcc.Graph(id='barrio-plot', figure=fig_barrio), width=4)
+        dbc.Col(dcc.Graph(id='dia-plot', figure=fig_dia_semana), md=4, xs=12, className="mb-3"),
+        dbc.Col(dcc.Graph(id='mes-plot', figure=fig_mes), md=4, xs=12, className="mb-3"),
+        dbc.Col(dcc.Graph(id='barrio-plot', figure=fig_barrio), md=4, xs=12, className="mb-3")
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='zona-plot', figure=fig_zona), width=6),
-        dbc.Col(dcc.Graph(id='gravedad-plot', figure=fig_gravedad), width=6)
+        dbc.Col(dcc.Graph(id='zona-plot', figure=fig_zona), md=6, xs=12, className="mb-3"),
+        dbc.Col(dcc.Graph(id='gravedad-plot', figure=fig_gravedad), md=6, xs=12, className="mb-3")
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='rango-edad-plot', figure=fig_rango_edad), width=6),
-        dbc.Col(dcc.Graph(id='condicion-victima-plot', figure=fig_condicion_victima), width=6)
+        dbc.Col(dcc.Graph(id='rango-edad-plot', figure=fig_rango_edad), md=6, xs=12, className="mb-3"),
+        dbc.Col(dcc.Graph(id='condicion-victima-plot', figure=fig_condicion_victima), md=6, xs=12, className="mb-3")
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='grafica-hipotesis', figure=fig_hipotesis_ajustada), width=12)
+        dbc.Col(dcc.Graph(id='grafica-hipotesis', figure=fig_hipotesis_ajustada), width=12, className="mb-3")
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='comuna-plot', figure=fig_comuna), width=12)
+        dbc.Col(dcc.Graph(id='comuna-plot', figure=fig_comuna), width=12, className="mb-3")
     ]),
     dbc.Row([
-        dbc.Col(date_picker, width=12)
+        dbc.Col(date_picker, md=6, xs=12, className="mb-3")
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='heatmap'), width=12)
+        dbc.Col(dcc.Graph(id='heatmap'), width=12, className="mb-3")
     ]),
-    # dbc.Row([
-    #     dbc.Col(dcc.Graph(figure=fig_mapa), width=12)
-    # ])
-], fluid=True)
+], fluid=True, className="p-4")
 
 # Ejecutar la aplicación
 if __name__ == '__main__':
