@@ -81,14 +81,20 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 # Dropdown para Seleccionar el Año
-year_dropdown = dcc.Dropdown(
-    id='year-dropdown',
-    options=[
-        {'label': '2022', 'value': 2022},
-        {'label': '2023', 'value': 2023}
-    ],
-    value=2022,
-    multi=False
+year_dropdown = dbc.Row(
+    dbc.Col(
+        dcc.Dropdown(
+            id='year-dropdown',
+            options=[
+                {'label': '2022', 'value': 2022},
+                {'label': '2023', 'value': 2023}
+            ],
+            value=2022,
+            multi=False
+        ),
+        md=6, xs=12, className="mb-3"
+    ),
+    justify="center",
 )
 
 # Callback para actualizar gráficos
@@ -156,15 +162,21 @@ def update_heatmap(start_date, end_date):
     return fig
 
 # Componente de selección de fecha para el heatmap
-date_picker = html.Div([
-    html.Label("Seleccione rango de fechas:"),
-    dcc.DatePickerRange(
-        id='date-picker-range',
-        start_date=df_accidentes['FECHA'].min(),
-        end_date=df_accidentes['FECHA'].max(),
-        display_format='DD/MM/YYYY'
+date_picker = dbc.Row(
+    dbc.Col(
+        [
+            html.Label("Seleccione rango de fechas:"),
+            dcc.DatePickerRange(
+                id='date-picker-range',
+                start_date=df_accidentes['FECHA'].min(),
+                end_date=df_accidentes['FECHA'].max(),
+                display_format='DD/MM/YYYY'
+            )
+        ],
+        md=6, xs=12, className="mb-3"
     ),
-], style={'marginBottom': 20, 'marginTop': 20})
+    justify="center",
+)
 
 # Definir el layout de la aplicación
 app.layout = dbc.Container([
