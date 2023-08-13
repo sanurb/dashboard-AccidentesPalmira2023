@@ -33,8 +33,11 @@ df_accidentes['RANGO_EDAD'] = pd.cut(df_accidentes['EDAD'], bins=bins, labels=la
 # Columna para las comunas
 df_accidentes['COMUNA'] = df_accidentes['BARRIOS-CORREGIMIENTO- VIA'].map(barrio_comuna_mapping)
 total_accidentes = len(df_accidentes)
+comunas_count = df_accidentes['COMUNA'].value_counts().reset_index()
+comunas_count.columns = ['COMUNA', 'CUENTA']
 comunas_percent = (df_accidentes['COMUNA'].value_counts() / total_accidentes * 100).reset_index()
 comunas_percent.columns = ['COMUNA', 'PORCENTAJE']
+comunas_percent = comunas_percent.merge(comunas_count, on="COMUNA")
 
 # Gráfico de barras para hipótesis de accidentes
 NmaxHipotesis = 15  # Número de hipótesis más frecuentes a mostrar
@@ -70,8 +73,8 @@ fig_hipotesis_ajustada = px.bar(
     color='CUENTA',
     color_continuous_scale=px.colors.sequential.Blues
 )
-fig_comuna = px.bar(comunas_percent, x="COMUNA", y="PORCENTAJE", title="Porcentaje de Accidentes por Comuna (2022-2023)",
-                    labels={'COMUNA': 'Comuna', 'PORCENTAJE': '% de Accidentes'}, color='PORCENTAJE', color_continuous_scale=color_scale)
+fig_comuna = px.pie(comunas_percent, names="COMUNA", values="PORCENTAJE", title="Porcentaje de Accidentes por Comuna (2022-2023)",
+                    labels={'COMUNA': 'Comuna', 'PORCENTAJE': '% de Accidentes'}, hole=0.3)
 
 # Crear la aplicación Dash
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -113,7 +116,11 @@ def update_graphs(selected_year):
                                           title=f"Distribución de Accidentes por Rango de Edad y Género ({selected_year})")
     fig_condicion_victima_updated = px.histogram(filtered_df, x="CONDICION DE LA VICTIMA",
                                                  title=f"Condición de la Víctima ({selected_year})")
-    fig_comuna_updated = px.histogram(filtered_df, x="COMUNA", title=f"Accidentes por Comuna ({selected_year})")
+    comunas_percent_updated = (filtered_df['COMUNA'].value_counts() / len(filtered_df) * 100).reset_index()
+    comunas_percent_updated.columns = ['COMUNA', 'PORCENTAJE']
+    fig_comuna_updated = px.pie(comunas_percent_updated, names="COMUNA", values="PORCENTAJE",
+                                title=f"Porcentaje de Accidentes por Comuna ({selected_year})",
+                                labels={'COMUNA': 'Comuna', 'PORCENTAJE': '% de Accidentes'}, hole=0.3)
 
     return fig_dia_updated, fig_mes_updated, fig_barrio_updated, fig_zona_updated, fig_gravedad_updated, fig_rango_edad_updated, fig_condicion_victima_updated, fig_comuna_updated
 
