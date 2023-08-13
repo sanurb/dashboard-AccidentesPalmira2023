@@ -5,7 +5,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 from datetime import datetime
 import dash_bootstrap_components as dbc
-from mappings import barrio_comuna_mapping
+from mappings import barrio_comuna_mapping, month_mapping
 
 color_scale = px.colors.sequential.Plasma
 # Leer el CSV y parsear la fecha
@@ -71,12 +71,14 @@ df_hipotesis_ajustada.columns = ['HIPOTESIS_AJUSTADA', 'CUENTA']
 
 MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoiZHNhbnR1cmJhbiIsImEiOiJjbGwxaWhpNGQwMGxkM3BtaWlidDlpOTdqIn0.Q2nMClAqoAHrwIktR-kcKA"
 px.set_mapbox_access_token(MAPBOX_ACCESS_TOKEN)
+df_accidentes['MES_NOMBRE'] = df_accidentes['MES'].map(month_mapping)
 
 # Crear visualizaciones
 fig_mes = px.histogram(
     df_accidentes,
-    x="MES",
-    title="Accidentes por Mes (2022-2023)")
+    x="MES_NOMBRE",
+    title="Accidentes por Mes (2022-2023)",
+    color_discrete_sequence=[color_scale[5]])
 fig_dia_semana = px.histogram(
     df_accidentes,
     x="DIA_SEMANA",
@@ -172,9 +174,10 @@ def update_graphs(selected_year):
         x="DIA_SEMANA",
         title=f"Accidentes por Día de la Semana ({selected_year})")
     fig_mes_updated = px.histogram(
-        filtered_df,
-        x="MES",
-        title=f"Accidentes por Mes ({selected_year})")
+        df_accidentes,
+        x="MES_NOMBRE",
+        title=f"Accidentes por Mes ({selected_year})",
+        color_discrete_sequence=[px.colors.qualitative.Plotly[0]])
     fig_barrio_updated = px.histogram(
         filtered_df,
         x="BARRIOS-CORREGIMIENTO- VIA",
