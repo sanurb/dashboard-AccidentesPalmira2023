@@ -76,13 +76,15 @@ df_accidentes['MES_NOMBRE'] = df_accidentes['MES'].map(month_mapping)
 # Crear visualizaciones
 fig_mes = px.histogram(
     df_accidentes,
-    x="MES_NOMBRE",
+    y="MES_NOMBRE",
     title="Accidentes por Mes (2022-2023)",
-    color_discrete_sequence=[px.colors.qualitative.Plotly[0]])
+    color_discrete_sequence=[px.colors.qualitative.Plotly[0]],
+    labels={'MES_NOMBRE': 'Mes', 'count': 'Número de Accidentes'})
 fig_dia_semana = px.histogram(
     df_accidentes,
-    x="DIA_SEMANA",
-    title="Accidentes por Día de la Semana (2022-2023)")
+    y="DIA_SEMANA",
+    title="Accidentes por Día de la Semana (2022-2023)",
+    labels={'DIA_SEMANA': 'Día de la Semana', 'count': 'Número de Accidentes'})
 fig_barrio = px.histogram(
     df_accidentes,
     x="BARRIOS-CORREGIMIENTO- VIA",
@@ -171,13 +173,16 @@ def update_graphs(selected_year):
 
     fig_dia_updated = px.histogram(
         filtered_df,
-        x="DIA_SEMANA",
-        title=f"Accidentes por Día de la Semana ({selected_year})")
+        y="DIA_SEMANA",
+        title=f"Accidentes por Día de la Semana ({selected_year})",
+        labels={'DIA_SEMANA': 'Día de la Semana', 'count': 'Número de Accidentes'}
+    )
     fig_mes_updated = px.histogram(
         df_accidentes,
-        x="MES_NOMBRE",
+        y="MES_NOMBRE",
         title=f"Accidentes por Mes ({selected_year})",
-        color_discrete_sequence=[px.colors.qualitative.Plotly[0]])
+        color_discrete_sequence=[px.colors.qualitative.Plotly[0]],
+        labels={'MES_NOMBRE': 'Mes', 'count': 'Número de Accidentes'})
     fig_barrio_updated = px.histogram(
         filtered_df,
         x="BARRIOS-CORREGIMIENTO- VIA",
@@ -240,10 +245,10 @@ def update_heatmap(start_date, end_date):
     fig = px.density_mapbox(df_grouped, lat='LAT', lon='LONG',
                             z='COUNT', radius=10,
                             center=dict(lat=3.53, lon=-76.3), zoom=12,
-                            mapbox_style="stamen-terrain",
+                            mapbox_style="outdoors",
                             title="Mapa de Calor de Accidentes por Barrio")
 
-    fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(mapbox_style="outdoors")
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
     return fig
