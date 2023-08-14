@@ -8,6 +8,9 @@ import dash_bootstrap_components as dbc
 from mappings import barrio_comuna_mapping, month_mapping
 
 color_scale = px.colors.sequential.Plasma
+month_colors = px.colors.qualitative.Plotly
+day_colors = px.colors.qualitative.Pastel
+
 # Leer el CSV y parsear la fecha
 df_accidentes = pd.read_csv(
     "../accidentes_palmira.csv",
@@ -78,11 +81,14 @@ fig_mes = px.histogram(
     df_accidentes,
     y="MES_NOMBRE",
     title="Accidentes por Mes (2022-2023)",
-    color_discrete_sequence=[px.colors.qualitative.Plotly[0]],
+    color="MES_NOMBRE",
+    color_discrete_map={month: color for month, color in zip(df_accidentes['MES_NOMBRE'].unique(), month_colors)},
     labels={'MES_NOMBRE': 'Mes', 'count': 'Número de Accidentes'})
 fig_dia_semana = px.histogram(
     df_accidentes,
     y="DIA_SEMANA",
+    color="DIA_SEMANA",
+    color_discrete_sequence=day_colors,
     title="Accidentes por Día de la Semana (2022-2023)",
     labels={'DIA_SEMANA': 'Día de la Semana', 'count': 'Número de Accidentes'})
 fig_barrio = px.histogram(
@@ -113,6 +119,7 @@ fig_mapa = px.scatter_mapbox(df_accidentes,
                              zoom=12,
                              center={"lat": 3.5391, "lon": -76.3035},
                              mapbox_style="mapbox://styles/mapbox/streets-v11")
+
 fig_hipotesis_ajustada = px.bar(
     df_hipotesis_ajustada,
     x='HIPOTESIS_AJUSTADA',
@@ -175,13 +182,16 @@ def update_graphs(selected_year):
         filtered_df,
         y="DIA_SEMANA",
         title=f"Accidentes por Día de la Semana ({selected_year})",
+        color="DIA_SEMANA",
+        color_discrete_sequence=day_colors,
         labels={'DIA_SEMANA': 'Día de la Semana', 'count': 'Número de Accidentes'}
     )
     fig_mes_updated = px.histogram(
         df_accidentes,
         y="MES_NOMBRE",
         title=f"Accidentes por Mes ({selected_year})",
-        color_discrete_sequence=[px.colors.qualitative.Plotly[0]],
+        color="MES_NOMBRE",
+        color_discrete_map={month: color for month, color in zip(df_accidentes['MES_NOMBRE'].unique(), month_colors)},
         labels={'MES_NOMBRE': 'Mes', 'count': 'Número de Accidentes'})
     fig_barrio_updated = px.histogram(
         filtered_df,
@@ -286,9 +296,11 @@ app.layout = dbc.Container([
         justify="center",
     ),
     dbc.Row([
-        dbc.Col(dcc.Graph(id='dia-plot', figure=fig_dia_semana), md=4, xs=12, className="mb-3"),
-        dbc.Col(dcc.Graph(id='mes-plot', figure=fig_mes), md=4, xs=12, className="mb-3"),
-        dbc.Col(dcc.Graph(id='barrio-plot', figure=fig_barrio), md=4, xs=12, className="mb-3")
+        dbc.Col(dcc.Graph(id='mes-plot', figure=fig_mes), md=6, xs=12),
+        dbc.Col(dcc.Graph(id='dia-plot', figure=fig_dia_semana), md=6, xs=12)
+    ]),
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='barrio-plot', figure=fig_barrio), md=12),
     ]),
     dbc.Row([
         dbc.Col(dcc.Graph(id='zona-plot', figure=fig_zona), md=6, xs=12, className="mb-3"),
