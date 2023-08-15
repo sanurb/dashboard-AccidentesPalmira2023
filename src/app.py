@@ -186,13 +186,16 @@ def update_graphs(selected_year):
         color_discrete_sequence=day_colors,
         labels={'DIA_SEMANA': 'Día de la Semana', 'count': 'Número de Accidentes'}
     )
-    fig_mes_updated = px.histogram(
-        df_accidentes,
-        y="MES_NOMBRE",
+    grouped_by_month = filtered_df.groupby(filtered_df['FECHA'].dt.to_period("M")).size().reset_index(name='Count')
+    grouped_by_month['FECHA'] = grouped_by_month['FECHA'].dt.to_timestamp()
+
+    fig_mes_updated = px.line(
+        grouped_by_month,
+        x="FECHA",
+        y="Count",
         title=f"Accidentes por Mes ({selected_year})",
-        color="MES_NOMBRE",
-        color_discrete_map={month: color for month, color in zip(df_accidentes['MES_NOMBRE'].unique(), month_colors)},
-        labels={'MES_NOMBRE': 'Mes', 'count': 'Número de Accidentes'})
+        labels={'FECHA': 'Fecha'},
+    )
     fig_barrio_updated = px.histogram(
         filtered_df,
         x="BARRIOS-CORREGIMIENTO- VIA",
